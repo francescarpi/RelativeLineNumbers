@@ -74,10 +74,10 @@ class RelativeLineNumbersEventListener(sublime_plugin.ViewEventListener):
                 self._tpl(*self._value(line_number, current_line)),
                 sublime.LAYOUT_INLINE))
 
-        self.phantoms.update(phantoms)
+        sublime.set_timeout_async(self.phantoms.update(phantoms), 0)
 
     def on_activated(self):
         self._render()
 
-    # def on_selection_modified(self):
-    #     self._render()
+    def on_selection_modified(self):
+        self._render()
