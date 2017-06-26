@@ -64,7 +64,13 @@ class RelativeLineNumbersEventListener(sublime_plugin.ViewEventListener):
         self.phantoms.update([])
 
         current_line = self.view.rowcol(self.view.sel()[0].begin())[0]
-        lines = self.view.lines(sublime.Region(0, self.view.size()))
+        # visible_lines = self.view.lines(self.view.visible_region())
+        # total_lines = len(visible_lines)
+        # lines = self.view.lines(
+        #     sublime.Region(
+        #         self.view.text_point(current_line - total_lines, 0),
+        #         self.view.text_point(current_line + total_lines, 0)))
+        lines = self.view.lines(sublime.Region(0, view.size()))
 
         for line in lines:
             line_number = self.view.rowcol(line.a)[0]
@@ -74,7 +80,10 @@ class RelativeLineNumbersEventListener(sublime_plugin.ViewEventListener):
                 self._tpl(*self._value(line_number, current_line)),
                 sublime.LAYOUT_INLINE))
 
-        sublime.set_timeout_async(self.phantoms.update(phantoms), 0)
+        self.phantoms.update(phantoms)
+
+    def on_modified(self):
+        self._render()
 
     def on_activated(self):
         self._render()
