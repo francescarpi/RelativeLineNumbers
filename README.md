@@ -10,6 +10,7 @@ A Sublime Text plugin for relative line numbers inspired by VintageLines. This p
 | relative_line_numbers_enabled | For enable/disable plugin | true |
 | relative_line_numbers_color | Foreground color for relative line numbers value | gray |
 | relative_line_numbers_zero_color | Foreground color for zero line value | white |
+| relative_line_numbers_current_line_char | Character indicator for the current line | 0 |
 
 # Screenshots
 ![](imgs/screenshot1.png "")

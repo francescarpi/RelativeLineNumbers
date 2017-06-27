@@ -10,6 +10,7 @@ PACKAGE = "RelativeLineNumbers"
 OPT_ENABLED = "relative_line_numbers_enabled"
 OPT_COLOR = "relative_line_numbers_color"
 OPT_COLOR_ZERO = "relative_line_numbers_zero_color"
+OPT_CURRENT_CHAR = "relative_line_numbers_current_line_char"
 
 
 class RelativeLineNumbersEventListener(sublime_plugin.ViewEventListener):
@@ -19,43 +20,49 @@ class RelativeLineNumbersEventListener(sublime_plugin.ViewEventListener):
         self.phantoms = sublime.PhantomSet(view, PACKAGE)
         self._render()
 
-    def _tpl(self, *kwargs):
+    def _tpl(self, value, current):
         settings = self.view.settings()
         color = settings.get(OPT_COLOR, "gray")
         zero = settings.get(OPT_COLOR_ZERO, "white")
+        current_class = "current" if current else ""
 
         return """
-            <body id="{0}">
+            <body id="{package}">
                 <style>
                     .value {{
-                        color: {1};
+                        color: {color};
                         margin-right: 10px;
                     }}
-                    .value0 {{
-                        color: {2};
+                    .current {{
+                        color: {zero};
                     }}
                 </style>
-                <div class="value value{3}">{4}</div>
-            </body> 
-        """.format(PACKAGE, color, zero, *kwargs)
+                <div class="value {current_class}">{value}</div>
+            </body>
+        """.format(**dict(
+            package=PACKAGE,
+            color=color,
+            zero=zero,
+            value=value,
+            current_class=current_class))
 
-    def _value(self, line_number, current_line):
-        value = 0
+    def _value(self, line_number, current_line, current_line_char):
+        value, current = current_line_char, True
         if line_number < current_line:
-            value = current_line - line_number
+            value, current = str(current_line - line_number), False
         elif line_number > current_line:
-            value = line_number - current_line
+            value, current = str(line_number - current_line), False
 
-        valuestr = str(value)
-        if value < 10:
-            valuestr = "&nbsp;" + valuestr
+        if len(value) == 1:
+            value = "&nbsp;" + value
 
-        return value, valuestr
+        return value, current
 
     def _render(self):
 
         settings = self.view.settings()
         enabled = settings.get(OPT_ENABLED, True)
+        current_line_char = settings.get(OPT_CURRENT_CHAR, "0")
         if not enabled:
             self.phantoms.update([])
             return
@@ -74,10 +81,12 @@ class RelativeLineNumbersEventListener(sublime_plugin.ViewEventListener):
 
         for line in lines:
             line_number = self.view.rowcol(line.a)[0]
+            value, current = self._value(
+                line_number, current_line, current_line_char)
 
             phantoms.append(sublime.Phantom(
-                line, 
-                self._tpl(*self._value(line_number, current_line)),
+                line,
+                self._tpl(value, current),
                 sublime.LAYOUT_INLINE))
 
         self.phantoms.update(phantoms)
