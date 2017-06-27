@@ -9,7 +9,7 @@ import sublime_plugin
 PACKAGE = "RelativeLineNumbers"
 OPT_ENABLED = "relative_line_numbers_enabled"
 OPT_COLOR = "relative_line_numbers_color"
-OPT_COLOR_ZERO = "relative_line_numbers_zero_color"
+OPT_COLOR_CURRENT = "relative_line_numbers_current_line_color"
 OPT_CURRENT_CHAR = "relative_line_numbers_current_line_char"
 
 
@@ -23,7 +23,7 @@ class RelativeLineNumbersEventListener(sublime_plugin.ViewEventListener):
     def _tpl(self, value, current):
         settings = self.view.settings()
         color = settings.get(OPT_COLOR, "gray")
-        zero = settings.get(OPT_COLOR_ZERO, "white")
+        zero = settings.get(OPT_COLOR_CURRENT, "white")
         current_class = "current" if current else ""
 
         return """
