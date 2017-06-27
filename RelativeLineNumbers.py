@@ -70,7 +70,7 @@ class RelativeLineNumbersEventListener(sublime_plugin.ViewEventListener):
             return
 
         current_line = self.view.rowcol(self.view.sel()[0].begin())[0]
-        # For improve performance, only plugin render when current
+        # For improve performance, only plugin is rendered when current
         # line has changed
         if current_line == self._last_current_line:
             return
@@ -84,13 +84,15 @@ class RelativeLineNumbersEventListener(sublime_plugin.ViewEventListener):
             value, current = self._value(
                 line_number, current_line, current_line_char)
 
-            phantoms.append(sublime.Phantom(
-                line,
-                self._tpl(value, current),
-                sublime.LAYOUT_INLINE))
+            phantoms.append(
+                sublime.Phantom(line, self._tpl(value, current),
+                                sublime.LAYOUT_INLINE))
 
         self.phantoms.update(phantoms)
         self._last_current_line = current_line
+        self.view.set_viewport_position(
+            (0, self.view.viewport_position()[1]),
+            False)
 
     def on_activated(self):
         self._render()
