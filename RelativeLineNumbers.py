@@ -33,6 +33,8 @@ class RelativeLineNumbersEventListener(sublime_plugin.ViewEventListener):
                     .value {{
                         color: {color};
                         margin-right: 10px;
+                        font-size: 10px;
+                        padding-top: 5px;
                     }}
                     .current {{
                         color: {zero};
