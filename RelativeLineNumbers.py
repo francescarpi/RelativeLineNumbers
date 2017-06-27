@@ -91,9 +91,6 @@ class RelativeLineNumbersEventListener(sublime_plugin.ViewEventListener):
 
         self.phantoms.update(phantoms)
 
-    def on_modified(self):
-        self._render()
-
     def on_activated(self):
         self._render()
 
