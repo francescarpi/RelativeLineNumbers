@@ -1,0 +1,3 @@
+[
+    { "keys": ["alt+l"], "command": "relative_line_numbers" }
+]

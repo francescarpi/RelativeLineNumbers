@@ -10,12 +10,10 @@ PACKAGE = "RelativeLineNumbers"
 OPT_ENABLED = "relative_line_numbers_enabled"
 OPT_COLOR = "relative_line_numbers_color"
 OPT_COLOR_ZERO = "relative_line_numbers_zero_color"
+OPT_CLEAR_TIMEOUT = "relative_line_numbers_clear_timeout"
 
 
 class RelativeLineNumbersCommand(sublime_plugin.TextCommand):
-    """
-    run: view.run_command('relative_line_numbers')
-    """
 
     def __init__(self, *args, **kwargs):
         super(RelativeLineNumbersCommand, self).__init__(*args, **kwargs)
@@ -23,12 +21,11 @@ class RelativeLineNumbersCommand(sublime_plugin.TextCommand):
         self.phantoms = sublime.PhantomSet(self.view, PACKAGE)
 
     def run(self, edit, *args, **kwargs):
-        self._visible = not self._visible
-
-        if self._visible:
+        if not self._visible:
             self._render()
         else:
             self._clear()
+        self._visible = not self._visible
 
     def _tpl(self, *kwargs):
         settings = self.view.settings()
@@ -64,6 +61,7 @@ class RelativeLineNumbersCommand(sublime_plugin.TextCommand):
         return value, valuestr
 
     def _clear(self):
+        self._visible = False
         self.phantoms.update([])
 
     def _render(self):
@@ -87,3 +85,7 @@ class RelativeLineNumbersCommand(sublime_plugin.TextCommand):
                 sublime.LAYOUT_INLINE))
 
         self.phantoms.update(phantoms)
+        self.view.set_viewport_position(
+            (0, self.view.viewport_position()[1]),
+            False)
+        sublime.set_timeout(self._clear, settings.get(OPT_CLEAR_TIMEOUT, 1000))
