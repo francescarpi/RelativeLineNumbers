@@ -5,14 +5,14 @@ A Sublime Text plugin for relative line numbers inspired by VintageLines. This p
 This plugin has been based with a command. This means that you should press a key for trigger it. Default key binding is:
 
 ```
-    Alt+l
+    Alt+a
 ```
 
 You can change it editing your key bindings.
 
 ```
 [
-    { "keys": ["alt+l"], "command": "relative_line_numbers" }
+    { "keys": ["alt+a"], "command": "relative_line_numbers" }
 ]
 ```
 
