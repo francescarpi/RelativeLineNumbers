@@ -2,7 +2,7 @@
 
 A Sublime Text plugin for relative line numbers inspired by VintageLines. This plugin use Phantoms instead Regions. This means that it's much more configurable.
 
-**Notice**: This is a unestable package. Working in progress...
+**Notice**: After some testing, is not possible to implement relative line numbers with phantoms. There are core api limitations.
 
 # Preferences
 | Option | Description | Default value |
