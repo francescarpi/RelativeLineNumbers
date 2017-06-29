@@ -12,12 +12,23 @@ OPT_COLOR = "relative_line_numbers_color"
 OPT_COLOR_ZERO = "relative_line_numbers_zero_color"
 
 
-class RelativeLineNumbersEventListener(sublime_plugin.ViewEventListener):
+class RelativeLineNumbersCommand(sublime_plugin.TextCommand):
+    """
+    run: view.run_command('relative_line_numbers')
+    """
 
-    def __init__(self, view):
-        self.view = view
-        self.phantoms = sublime.PhantomSet(view, PACKAGE)
-        self._render()
+    def __init__(self, *args, **kwargs):
+        super(RelativeLineNumbersCommand, self).__init__(*args, **kwargs)
+        self._visible = False
+        self.phantoms = sublime.PhantomSet(self.view, PACKAGE)
+
+    def run(self, edit, *args, **kwargs):
+        self._visible = not self._visible
+
+        if self._visible:
+            self._render()
+        else:
+            self._clear()
 
     def _tpl(self, *kwargs):
         settings = self.view.settings()
@@ -36,7 +47,7 @@ class RelativeLineNumbersEventListener(sublime_plugin.ViewEventListener):
                     }}
                 </style>
                 <div class="value value{3}">{4}</div>
-            </body> 
+            </body>
         """.format(PACKAGE, color, zero, *kwargs)
 
     def _value(self, line_number, current_line):
@@ -52,41 +63,27 @@ class RelativeLineNumbersEventListener(sublime_plugin.ViewEventListener):
 
         return value, valuestr
 
+    def _clear(self):
+        self.phantoms.update([])
+
     def _render(self):
 
         settings = self.view.settings()
         enabled = settings.get(OPT_ENABLED, True)
+        self._clear()
         if not enabled:
-            self.phantoms.update([])
             return
 
         phantoms = []
-        self.phantoms.update([])
-
         current_line = self.view.rowcol(self.view.sel()[0].begin())[0]
-        # visible_lines = self.view.lines(self.view.visible_region())
-        # total_lines = len(visible_lines)
-        # lines = self.view.lines(
-        #     sublime.Region(
-        #         self.view.text_point(current_line - total_lines, 0),
-        #         self.view.text_point(current_line + total_lines, 0)))
-        lines = self.view.lines(sublime.Region(0, view.size()))
+        lines = self.view.lines(self.view.visible_region())
 
         for line in lines:
             line_number = self.view.rowcol(line.a)[0]
 
             phantoms.append(sublime.Phantom(
-                line, 
+                line,
                 self._tpl(*self._value(line_number, current_line)),
                 sublime.LAYOUT_INLINE))
 
         self.phantoms.update(phantoms)
-
-    def on_modified(self):
-        self._render()
-
-    def on_activated(self):
-        self._render()
-
-    def on_selection_modified(self):
-        self._render()

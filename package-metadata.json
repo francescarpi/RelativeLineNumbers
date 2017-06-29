@@ -1,8 +1,0 @@
-{
-    "sublime_text": ">=3000",
-    "description": "A relative line numbers plugn for Sublime Text 3",
-    "version": "0.0.1",
-    "platforms": ["*"],
-    "dependencies": [],
-    "url": "https://github.com/francescarpi/RelativeLineNumbers"
-}
