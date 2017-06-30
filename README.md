@@ -29,4 +29,4 @@ After the command has been executed, the relative line numbers is cleared after 
 | relative_line_numbers_clear_timeout | Waiting time before to clear | 1000 |
 
 # Screenshots
-![](imgs/screenshot1.png "")
+![](imgs/screenshot2.gif "")
